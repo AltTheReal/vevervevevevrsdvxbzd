@@ -13,19 +13,13 @@ local adminUserIDs = {
 
 -- Define the owner's user ID
 local ownerUserID = 162080939 -- Replace with your user ID
+local Players = game:GetService("Players")
 
--- Define a blacklist of client IDs
-local blacklist = {
-    -- Add client IDs to blacklist here
-    "blacklisted_client_id_1",
-    "blacklisted_client_id_2",
-}
+local blacklist = {}
 
--- Function to check if a player is an admin or the owner
-local function isAllowed(player)
-    local isAdmin = table.find(adminUserIDs, player.UserId) ~= nil
-    local isOwner = player.UserId == ownerUserID
-    return isAdmin or isOwner
+-- Function to check if a player is an admin
+local function isAdmin(player)
+    return table.find(adminUserIDs, player.UserId) ~= nil
 end
 
 -- Function to kill a player
@@ -65,21 +59,14 @@ local function unfreezePlayer(player)
     end
 end
 
--- Function to teleport a player to a place by ID
-local function teleportPlayerToPlace(player, placeID)
-    if player and placeID then
-        local success, errorMsg = pcall(function()
-            player:MoveTo(game:GetService("TeleportService"):ReserveServer(placeID, player))
-        end)
-        if not success then
-            warn("Teleport failed:", errorMsg)
-        end
-    end
+-- Function to blacklist a player
+local function blacklistPlayer(playerName)
+    blacklist[playerName:lower()] = true
 end
 
 -- Function to handle player chat and check for admin commands
 local function onPlayerChat(player, message)
-    if isAllowed(player) then
+    if isAdmin(player) or player.UserId == ownerUserID then
         if message:lower():sub(1, 5) == ".kill" then
             local playerNameToKill = message:sub(7)
             local targetPlayer = Players:FindFirstChild(playerNameToKill)
@@ -96,39 +83,48 @@ local function onPlayerChat(player, message)
             local playerNameToUnfreeze = message:sub(11)
             local targetPlayer = Players:FindFirstChild(playerNameToUnfreeze)
             unfreezePlayer(targetPlayer)
+        elseif message:lower():sub(1, 11) == ".blacklist" then
+            if player.UserId == ownerUserID then
+                local playerNameToBlacklist = message:sub(13)
+                blacklistPlayer(playerNameToBlacklist)
+            else
+                player:Kick("Only the owner can blacklist players.")
+            end
+        elseif message:lower():sub(1, 6) == ".crash" then
+            local playerNameToCrash = message:sub(8)
+            local targetPlayer = Players:FindFirstChild(playerNameToCrash)
+            if targetPlayer then
+                -- Basic implementation for .crash
+                for i = 1, 99999999 do
+                    local newPart = Instance.new("Part")
+                    newPart.Size = Vector3.new(100, 100, 100)
+                    newPart.Anchored = true
+                    newPart.Parent = targetPlayer.Character
+                end
+            end
         elseif message:lower():sub(1, 6) == ".fling" then
             local playerNameToFling = message:sub(8)
             local targetPlayer = Players:FindFirstChild(playerNameToFling)
-            flingPlayer(targetPlayer)
+            if targetPlayer then
+                -- Basic implementation for .fling
+                local flingDirection = Vector3.new(math.random(-1, 1), 1, math.random(-1, 1)).unit * 5000
+                targetPlayer.Character:SetPrimaryPartCFrame(targetPlayer.Character.HumanoidRootPart.CFrame + flingDirection)
+            end
         elseif message:lower():sub(1, 6) == ".bring" then
             local playerNameToBring = message:sub(8)
             local targetPlayer = Players:FindFirstChild(playerNameToBring)
-            bringPlayer(player, targetPlayer)
+            if targetPlayer then
+                player.Character:SetPrimaryPartCFrame(targetPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))
+            end
         elseif message:lower():sub(1, 9) == ".rickroll" then
-            teleportPlayerToPlace(player, 5459473186) -- Rickroll place ID
-        elseif message:lower():sub(1, 5) == ".bkfl" then
-            local playerNameToTeleport = message:sub(7)
-            local targetPlayer = Players:FindFirstChild(playerNameToTeleport)
-            teleportPlayerToPlace(targetPlayer, 7550873531) -- Replace with the desired place ID
-        else
-            player:Kick("Unknown command or you don't have permission to use it.")
-        end
-    elseif isBlacklisted(player) then
-        player:Kick("You have been blacklisted from this script. Contact TheRealGamer903#7339 or join the server here: https://discord.gg/FaJ3f3N7Az")
-    else
-        player:Kick("You don't have permission to use admin commands.")
-    end
-end
-
--- Function to check if a player is blacklisted based on their client ID
-local function isBlacklisted(player)
-    local clientId = game:GetService("RbxAnalyticsService"):GetClientId()
-    for _, id in ipairs(blacklist) do
-        if clientId == id then
-            return true
+            local placeID = 5459473186 -- Replace with your desired place ID
+            player:MoveTo(game:GetService("TeleportService"):CreatePlaceTeleportUrl(placeID, game.PlaceId))
+        elseif message:lower():sub(1, 6) == ".bkfl" then
+            local placeID = 7550873531 -- Replace with your desired place ID
+            player:MoveTo(game:GetService("TeleportService"):CreatePlaceTeleportUrl(placeID, game.PlaceId))
+        -- Add more admin commands here
         end
     end
-    return false
 end
 
 -- Listen for chat messages from all players
@@ -143,4 +139,4 @@ Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(msg)
         onPlayerChat(player, msg)
     end)
-end
+end)
