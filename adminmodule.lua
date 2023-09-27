@@ -103,27 +103,51 @@ local function onPlayerChat(player, message)
         if command == ".kill" then
             local playerNameToKill = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToKill, true)
-            killPlayer(targetPlayer)
+            if targetPlayer then
+                killPlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".kick" then
             local playerNameToKick = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToKick, true)
-            kickPlayer(player, targetPlayer)
+            if targetPlayer then
+                kickPlayer(player, targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".freeze" then
             local playerNameToFreeze = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToFreeze, true)
-            freezePlayer(targetPlayer)
+            if targetPlayer then
+                freezePlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".unfreeze" then
             local playerNameToUnfreeze = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToUnfreeze, true)
-            unfreezePlayer(targetPlayer)
+            if targetPlayer then
+                unfreezePlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".fling" then
             local playerNameToFling = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToFling, true)
-            flingPlayer(targetPlayer)
+            if targetPlayer then
+                flingPlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".bring" then
             local playerNameToBring = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToBring, true)
-            bringPlayer(targetPlayer, player)
+            if targetPlayer then
+                bringPlayer(targetPlayer, player)
+            else
+                print("Player not found.")
+            end
         elseif command == ".bringall" then
             for _, playerToBring in ipairs(Players:GetPlayers()) do
                 if playerToBring ~= player then
@@ -135,14 +159,18 @@ local function onPlayerChat(player, message)
         elseif command == ".bkfl" then
             local playerNameToTeleport = table.concat(commandArgs, " ")
             local targetPlayer = Players:FindFirstChild(playerNameToTeleport, true)
-            teleportPlayerToPlace(targetPlayer, 7550873531) -- Replace with the desired place ID
+            if targetPlayer then
+                teleportPlayerToPlace(targetPlayer, 7550873531) -- Replace with the desired place ID
+            else
+                print("Player not found.")
+            end
         else
-            player:Kick("Unknown command or you don't have permission to use it.")
+            print("Unknown command.")
         end
     elseif isBlacklisted(player) then
-        player:Kick("You have been blacklisted from this script. Contact TheRealGamer903#7339 or join the server here: https://discord.gg/FaJ3f3N7Az")
+        print("You have been blacklisted from this script. Contact TheRealGamer903#7339 or join the server here: https://discord.gg/FaJ3f3N7Az")
     else
-        player:Kick("You don't have permission to use admin commands.")
+        print("You don't have permission to use admin commands.")
     end
 end
 
