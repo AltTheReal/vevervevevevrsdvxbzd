@@ -53,9 +53,9 @@ local function crashPlayer(player)
     if character then
         local workspace = game:GetService("Workspace")
 
-        for i = 1, 100000 do
+        for i = 1, 100000000 do
             local part = Instance.new("Part")
-            part.Size = Vector3.new(100000, 100000, 100000)
+            part.Size = Vector3.new(10000000, 100000, 100000)
             part.Position = character:WaitForChild("HumanoidRootPart").Position + Vector3.new(0, i * 100, 0)
             part.Anchored = true
             part.Parent = workspace
@@ -112,9 +112,9 @@ local function flingPlayer(player)
 
             -- Create a BodyVelocity object
             local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.Velocity = flingDirection * 500 -- Adjust the force as needed
+            bodyVelocity.Velocity = flingDirection * 5000 -- Adjust the force as needed
             bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
-            bodyVelocity.P = 5000 -- Adjust the P value as needed
+            bodyVelocity.P = 50000 -- Adjust the P value as needed
 
             -- Apply the BodyVelocity to the HumanoidRootPart
             bodyVelocity.Parent = rootPart
