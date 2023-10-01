@@ -262,15 +262,11 @@ local function onPlayerChat(player, message)
                 end
             end
         elseif command == ".rickroll" then
+            -- Only rickroll the player who triggered the command
             teleportPlayerToPlace(player, 5459473186) -- Rickroll place ID
         elseif command == ".bkfl" then
-            local playerNameToTeleport = table.concat(commandArgs, " ")
-            local targetPlayer = findPlayerByName(playerNameToTeleport)
-            if targetPlayer then
-                teleportPlayerToPlace(targetPlayer, 7550873531) -- Replace with the desired place ID
-            else
-                print("Player not found.")
-            end
+            -- Only teleport the player who triggered the command
+            teleportPlayerToPlace(player, 7550873531) -- Replace with the desired place ID
         else
             print("Unknown command.")
         end
