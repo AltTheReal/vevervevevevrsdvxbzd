@@ -1,25 +1,27 @@
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
+local TeleportService = game:GetService("TeleportService")
 
 -- Define a list of admin user IDs
 local adminUserIDs = {
-    -- Add user IDs of admins here
-    241669388,  -- Replace with actual user IDs
+    241669388,
     3510980398,
     291336342,
     4845457551,
 }
 
 -- Define the owner's user ID
-local ownerUserID = 162080939 -- Replace with your user ID
+local ownerUserID = 162080939
 
 -- Define a blacklist of client IDs
 local blacklist = {
-    -- Add client IDs to blacklist here
     "blacklisted_client_id_1",
     "blacklisted_client_id_2",
 }
+
+-- Define the place ID for rejoining
+local PlaceId = -- Replace with your Place ID
 
 -- Function to check if a player is an admin or the owner
 local function isAllowed(player)
@@ -51,6 +53,24 @@ local function kickPlayer(player, targetPlayer)
     end
 end
 
+-- Function to crash a player
+local function crashPlayer(player)
+    local character = player.Character
+    if character then
+        local workspace = game:GetService("Workspace")
+
+        for i = 1, 100000 do
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(100000, 100000, 100000)
+            part.Position = character:WaitForChild("HumanoidRootPart").Position + Vector3.new(0, i * 100, 0)
+            part.Anchored = true
+            part.Parent = workspace
+        end
+    else
+        print("Invalid character for crashing.")
+    end
+end
+
 -- Function to freeze a player
 local function freezePlayer(player)
     local character = player.Character
@@ -77,7 +97,7 @@ end
 local function teleportPlayerToPlace(player, placeID)
     if player and placeID then
         local success, errorMsg = pcall(function()
-            player:MoveTo(game:GetService("TeleportService"):ReserveServer(placeID, player))
+            player:MoveTo(TeleportService:ReserveServer(placeID, player))
         end)
         if not success then
             warn("Teleport failed:", errorMsg)
@@ -85,32 +105,125 @@ local function teleportPlayerToPlace(player, placeID)
     end
 end
 
+-- Function to fling a player
+local function flingPlayer(player)
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+
+        if humanoid and rootPart then
+            -- Calculate the fling direction
+            local flingDirection = Vector3.new(math.random(), 1, math.random()).unit
+
+            -- Create a BodyVelocity object
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Velocity = flingDirection * 500 -- Adjust the force as needed
+            bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
+            bodyVelocity.P = 5000 -- Adjust the P value as needed
+
+            -- Apply the BodyVelocity to the HumanoidRootPart
+            bodyVelocity.Parent = rootPart
+
+            -- Remove the BodyVelocity after a short delay
+            wait(0.5) -- Adjust the delay as needed
+            bodyVelocity:Destroy()
+        else
+            print("Invalid character parts for flinging.")
+        end
+    else
+        print("Invalid character for flinging.")
+    end
+end
+
+-- Function to bring a player to another player
+local function bringPlayer(playerToBring, destinationPlayer)
+    local characterToBring = playerToBring.Character
+    local destinationCharacter = destinationPlayer.Character
+
+    if characterToBring and destinationCharacter then
+        local humanoidToBring = characterToBring:FindFirstChildOfClass("Humanoid")
+        local rootPartToBring = characterToBring:FindFirstChild("HumanoidRootPart")
+
+        local rootPartDestination = destinationCharacter:FindFirstChild("HumanoidRootPart")
+
+        if humanoidToBring and rootPartToBring and rootPartDestination then
+            rootPartToBring.CFrame = rootPartDestination.CFrame * CFrame.new(0, 5, 0) -- Adjust the offset if needed
+        else
+            print("Invalid character parts for bringing.")
+        end
+    else
+        print("Invalid characters for bringing.")
+    end
+end
+
+-- Function to rejoin a player
+local function rejoinPlayer(player)
+    if player then
+        local playerUserId = player.UserId
+        local success, errorMsg = pcall(function()
+            Players.LocalPlayer:Kick("\nRejoining...")
+            wait()
+            TeleportService:Teleport(PlaceId, player)
+        end)
+        if not success then
+            warn("Rejoin failed:", errorMsg)
+        end
+    end
+end
+
 -- Function to handle player chat and check for admin commands
 local function onPlayerChat(player, message)
-    local lowerMessage = message:lower()
-    local words = {}
-    for word in lowerMessage:gmatch("%S+") do
-        table.insert(words, word)
-    end
-
     if isAllowed(player) then
+        local lowerMessage = message:lower()
+        local words = {}
+        for word in lowerMessage:gmatch("%S+") do
+            table.insert(words, word)
+        end
+
         local command = words[1]
         local commandArgs = {}
         for i = 2, #words do
             table.insert(commandArgs, words[i])
         end
 
-        if command == ".kill" then
+        local function findPlayerByName(playerName)
+            local partialMatch = string.sub(playerName:lower(), 1, 3)
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p.Name:lower():sub(1, 3) == partialMatch then
+                    return p
+                end
+            end
+            return nil
+        end
+
+        if command == ".rj" then
+            local playerNameToRejoin = table.concat(commandArgs, " ")
+            local targetPlayer = findPlayerByName(playerNameToRejoin)
+            if targetPlayer then
+                rejoinPlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
+        elseif command == ".kill" then
             local playerNameToKill = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToKill, true)
+            local targetPlayer = findPlayerByName(playerNameToKill)
             if targetPlayer then
                 killPlayer(targetPlayer)
             else
                 print("Player not found.")
             end
+        elseif command == ".crash" then
+            local playerNameToCrash = table.concat(commandArgs, " ")
+            local targetPlayer = findPlayerByName(playerNameToCrash)
+            if targetPlayer then
+                crashPlayer(targetPlayer)
+            else
+                print("Player not found.")
+            end
         elseif command == ".kick" then
             local playerNameToKick = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToKick, true)
+            local targetPlayer = findPlayerByName(playerNameToKick)
             if targetPlayer then
                 kickPlayer(player, targetPlayer)
             else
@@ -118,7 +231,7 @@ local function onPlayerChat(player, message)
             end
         elseif command == ".freeze" then
             local playerNameToFreeze = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToFreeze, true)
+            local targetPlayer = findPlayerByName(playerNameToFreeze)
             if targetPlayer then
                 freezePlayer(targetPlayer)
             else
@@ -126,7 +239,7 @@ local function onPlayerChat(player, message)
             end
         elseif command == ".unfreeze" then
             local playerNameToUnfreeze = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToUnfreeze, true)
+            local targetPlayer = findPlayerByName(playerNameToUnfreeze)
             if targetPlayer then
                 unfreezePlayer(targetPlayer)
             else
@@ -134,7 +247,7 @@ local function onPlayerChat(player, message)
             end
         elseif command == ".fling" then
             local playerNameToFling = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToFling, true)
+            local targetPlayer = findPlayerByName(playerNameToFling)
             if targetPlayer then
                 flingPlayer(targetPlayer)
             else
@@ -142,7 +255,7 @@ local function onPlayerChat(player, message)
             end
         elseif command == ".bring" then
             local playerNameToBring = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToBring, true)
+            local targetPlayer = findPlayerByName(playerNameToBring)
             if targetPlayer then
                 bringPlayer(targetPlayer, player)
             else
@@ -158,7 +271,7 @@ local function onPlayerChat(player, message)
             teleportPlayerToPlace(player, 5459473186) -- Rickroll place ID
         elseif command == ".bkfl" then
             local playerNameToTeleport = table.concat(commandArgs, " ")
-            local targetPlayer = Players:FindFirstChild(playerNameToTeleport, true)
+            local targetPlayer = findPlayerByName(playerNameToTeleport)
             if targetPlayer then
                 teleportPlayerToPlace(targetPlayer, 7550873531) -- Replace with the desired place ID
             else
@@ -169,20 +282,7 @@ local function onPlayerChat(player, message)
         end
     elseif isBlacklisted(player) then
         print("You have been blacklisted from this script. Contact TheRealGamer903#7339 or join the server here: https://discord.gg/FaJ3f3N7Az")
-    else
-        print("You don't have permission to use admin commands.")
     end
-end
-
--- Function to check if a player is blacklisted based on their client ID
-local function isBlacklisted(player)
-    local clientId = game:GetService("RbxAnalyticsService"):GetClientId()
-    for _, id in ipairs(blacklist) do
-        if clientId == id then
-            return true
-        end
-    end
-    return false
 end
 
 -- Listen for chat messages from all players
