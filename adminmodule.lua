@@ -91,7 +91,7 @@ end
 local function teleportPlayerToPlace(player, placeID)
     if player and placeID then
         local success, errorMsg = pcall(function()
-            player:MoveTo(TeleportService:ReserveServer(placeID, player))
+            player:MoveTo(TeleportService:Teleport(placeID, player))
         end)
         if not success then
             warn("Teleport failed:", errorMsg)
