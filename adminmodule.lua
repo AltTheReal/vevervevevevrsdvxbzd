@@ -14,14 +14,8 @@ local adminUserIDs = {
 -- Define the owner's user ID
 local ownerUserID = 162080939
 
--- Define a blacklist of client IDs
-local blacklist = {
-    "blacklisted_client_id_1",
-    "blacklisted_client_id_2",
-}
-
 -- Define the place ID for rejoining
-local PlaceId = -- Replace with your Place ID
+local PlaceId = game.PlaceId 
 
 -- Function to check if a player is an admin or the owner
 local function isAllowed(player)
@@ -280,8 +274,6 @@ local function onPlayerChat(player, message)
         else
             print("Unknown command.")
         end
-    elseif isBlacklisted(player) then
-        print("You have been blacklisted from this script. Contact TheRealGamer903#7339 or join the server here: https://discord.gg/FaJ3f3N7Az")
     end
 end
 
