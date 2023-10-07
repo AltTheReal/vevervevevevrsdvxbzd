@@ -9,6 +9,7 @@ local adminUserIDs = {
     3510980398,
     291336342,
     4845457551,
+    3449798604,
 }
 
 -- Define the owner's user ID
