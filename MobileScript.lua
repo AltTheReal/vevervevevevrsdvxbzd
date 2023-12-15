@@ -1,5 +1,4 @@
---AntiHttpSpy
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AltTheReal/OBEDSKDKSKFJSJF/main/AntiHTTPSpy.lua"))()
+
 local loading = false
 repeat task.wait()
 	if not loading then
