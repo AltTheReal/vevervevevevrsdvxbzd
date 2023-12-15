@@ -1,3 +1,5 @@
+print("loading")
+
 local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
 
 local Window = OrionLib:MakeWindow({Name = "kill arua", HidePremium = false, SaveConfig = false, IntroEnabled = true})
