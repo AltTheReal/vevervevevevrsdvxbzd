@@ -15,17 +15,6 @@ TeleportService = game:GetService("TeleportService")
 
 --Globals
 LocalPlayer = Players.LocalPlayer
-Mouse = LocalPlayer:GetMouse()
-Camera = Workspace.CurrentCamera
-ALLITEMS = require(ReplicatedStorage:WaitForChild('References'):WaitForChild('SharedData'):WaitForChild('Items'))['Items']
-ALLITEMSTABLE = {}
-SWITCHEDITEMSTABLE = {}
-for id, index in pairs(ALLITEMS) do
-	ALLITEMSTABLE[index['id']] = index['Name']
-end
-for id, index in pairs(ALLITEMS) do
-	SWITCHEDITEMSTABLE[index['Name']] = index['id']
-end
 --RemoteEvents
 RemoteEvents = {
     ToolAction = ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('ToolAction');
@@ -40,18 +29,9 @@ RemoteEvents = {
     Sonar =  ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('Sonar');
 }
 --Important locals
-local message = require(LocalPlayer:WaitForChild('PlayerScripts'):WaitForChild('Main'):WaitForChild('Message'))
-local MyInventory = LocalPlayer:WaitForChild('PlayerGui'):FindFirstChild('Menus'):FindFirstChild('Inventory'):FindFirstChild('Inventory'):FindFirstChild('List')
 local Whitelist_table = {};
 local OpKillAuraTable = {};
-local realgameadmins = {849400193, 134488231, 146733116, 27865601}
-local MoonstoneSet = {363, 364, 365, 366}
-local ObsidianSet = {225, 226, 227, 228}
-local AllShields = {206, 207, 208, 209, 210, 211, 219, 235, 367, 379}
-local AllSwords = {173, 205, 230, 369, 255, 254, 253}
-local AllBows = {174, 197, 198, 199, 376}
-local AllBooks = {281, 282, 283, 284, 285, 286, 287, 296, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 323, 362}
-local AllStaffs = {293, 292, 291, 290, 162, 289}
+
 
 --Safe Death Connections
 local TimeTped
@@ -189,7 +169,6 @@ DupeTab:AddButton({
     Name = 'Stop data(dupe)',
     Callback = function(Value)
         RemoteEvents['SetSettings']:FireServer(Workspace)
-		MakeAtlasNotification('Data Stopped', 'Drop anything you want :)', 5)
     end
 })
 
