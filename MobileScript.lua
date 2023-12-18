@@ -100,6 +100,12 @@ local Tab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local DupeTab = Window:MakeTab({
+	Name = "Dupe",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
 local Section = Tab:AddSection({
 	Name = "Stuff"
 
@@ -178,3 +184,15 @@ Tab:AddButton({
         end
     end
 })
+
+DupeTab:AddButton({
+    Name = 'Stop data(dupe)',
+    Callback = function(Value)
+        RemoteEvents['SetSettings']:FireServer(Workspace)
+		MakeAtlasNotification('Data Stopped', 'Drop anything you want :)', 5)
+    end
+})
+
+
+
+
