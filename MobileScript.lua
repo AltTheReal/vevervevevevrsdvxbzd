@@ -1,5 +1,21 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 local Window = Library.CreateLib("TheRealGamer Hub", "LightTheme")
+Workspace = game:GetService('Workspace')
+Players = game:GetService('Players')
+ReplicatedStorage = game:GetService('ReplicatedStorage')
+UserInputService = game:GetService('UserInputService')
+TweenService = game:GetService("TweenService")
+RunService = game:GetService('RunService')
+Lighting  = game:GetService('Lighting')
+VirtualUser = game:GetService("VirtualUser")
+HttpService = game:GetService('HttpService')
+TeleportService = game:GetService("TeleportService")
+
+--Globals
+LocalPlayer = Players.LocalPlayer
+Mouse = LocalPlayer:GetMouse()
+Camera = Workspace.CurrentCamera
+
 RemoteEvents = {
     ToolAction = ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('ToolAction');
     InventoryInteraction =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("InventoryInteraction");
@@ -68,21 +84,7 @@ local response = request({
 
 
 --Services
-Workspace = game:GetService('Workspace')
-Players = game:GetService('Players')
-ReplicatedStorage = game:GetService('ReplicatedStorage')
-UserInputService = game:GetService('UserInputService')
-TweenService = game:GetService("TweenService")
-RunService = game:GetService('RunService')
-Lighting  = game:GetService('Lighting')
-VirtualUser = game:GetService("VirtualUser")
-HttpService = game:GetService('HttpService')
-TeleportService = game:GetService("TeleportService")
 
---Globals
-LocalPlayer = Players.LocalPlayer
-Mouse = LocalPlayer:GetMouse()
-Camera = Workspace.CurrentCamera
 
 getgenv().configs = {
     Bypassing = false;
