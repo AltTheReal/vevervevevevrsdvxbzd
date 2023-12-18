@@ -83,15 +83,7 @@ TeleportService = game:GetService("TeleportService")
 LocalPlayer = Players.LocalPlayer
 Mouse = LocalPlayer:GetMouse()
 Camera = Workspace.CurrentCamera
-ALLITEMS = require(ReplicatedStorage:WaitForChild('References'):WaitForChild('SharedData'):WaitForChild('Items'))['Items']
-ALLITEMSTABLE = {}
-SWITCHEDITEMSTABLE = {}
-for id, index in pairs(ALLITEMS) do
-	ALLITEMSTABLE[index['id']] = index['Name']
-end
-for id, index in pairs(ALLITEMS) do
-	SWITCHEDITEMSTABLE[index['Name']] = index['id']
-end
+
 getgenv().configs = {
     Bypassing = false;
     AutoPickup2 = false;
