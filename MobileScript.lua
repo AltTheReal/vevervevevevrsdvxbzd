@@ -1,21 +1,5 @@
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-
-local Window = OrionLib:MakeWindow({Name = "kill arua", HidePremium = false, SaveConfig = false, IntroEnabled = true})
---Services
-Workspace = game:GetService('Workspace')
-Players = game:GetService('Players')
-ReplicatedStorage = game:GetService('ReplicatedStorage')
-UserInputService = game:GetService('UserInputService')
-TweenService = game:GetService("TweenService")
-RunService = game:GetService('RunService')
-Lighting  = game:GetService('Lighting')
-VirtualUser = game:GetService("VirtualUser")
-HttpService = game:GetService('HttpService')
-TeleportService = game:GetService("TeleportService")
-
---Globals
-LocalPlayer = Players.LocalPlayer
---RemoteEvents
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("I Love anime", "DarkTheme")
 RemoteEvents = {
     ToolAction = ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('ToolAction');
     InventoryInteraction =  ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("InventoryInteraction");
@@ -28,71 +12,10 @@ RemoteEvents = {
     KeyDoor = ReplicatedStorage:WaitForChild("References"):WaitForChild("Comm"):WaitForChild("Events"):WaitForChild("KeyDoor");
     Sonar =  ReplicatedStorage:WaitForChild('References'):WaitForChild('Comm'):WaitForChild('Events'):WaitForChild('Sonar');
 }
---Important locals
-local Whitelist_table = {};
-local OpKillAuraTable = {};
-
-
---Safe Death Connections
-local TimeTped
-local TimeBetweenTps
-local TeleportHappened = false
-local SafeDeathHealthChecker = nil
-
---Boss Death connections
-local AutoPickupOnObsidianDeath
-local AutoPickupOnZenLuckBossDeath
-local AutoPickupOnSpiritBossDeath
-local AutoPickuponLuckySlimeDeath
-local AutoPickupOnSkeletonDeath
-local AutoPickupOnOgreDeath
-local AutoPickupOnSquidDeath
-
---Dupe locals
-local ItemIndexed
-local ItemIndexedNumber
-
---Aimbot locals
-local CurrentlyLocked
-local Aiming = false
-
---Quickspeed locals
-local OnOff = false
-local keydetected 
-
---setup ac bypass
-if not getgenv().bypassing then
-    getgenv().bypassing = true
-    local bypassac
-
-    bypassac = hookmetamethod(game, '__namecall', function(self, ...)
-        local args = {...}
-        if not checkcaller() and self == RemoteEvents['Sonar'] then
-            return nil
-        end
-        return bypassac(self, ...)
-    end) 
-end 
-
-local Tab = Window:MakeTab({
-	Name = "main",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-local DupeTab = Window:MakeTab({
-	Name = "Dupe",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-local Section = Tab:AddSection({
-	Name = "Stuff"
-
-Tab:AddToggle({
-    Name = 'kill arua',
-    Callback = function()
-        function KillAura()
+-- Main
+local Main = Window:NewTab("Main")
+local MainSection = Main:NewSection("Main")
+function KillAura()
     while getgenv().configs.KillAura do
         if getgenv().configs.KillAura then
             task.wait()
@@ -137,17 +60,36 @@ Tab:AddToggle({
             end
         end
     end
-end 
-Tab:AddButton({
-    Name = 'Infinite Yield', 
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source', true))()
-    end
-})
+end
 
-Tab:AddButton({
-    Name = "AC Bypass",
-    Callback = function()
+MainSection:NewButton("infinite yield", "run", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+MainSection:NewButton("dupe", "save stuff", function()
+    getgenv().olddata = game:GetService("ReplicatedStorage").References.Comm.Events.SetSettings
+    game:GetService("ReplicatedStorage").References.Comm.Events.SetSettings:FireServer(getgenv().olddata)
+end)
+MainSection:NewToggle("Killaura", "save stuff", function()
+    Callback = function(Value)
+        getgenv().configs.KillAura = Value
+        KillAura()
+    end
+end)
+if not getgenv().bypassing then
+    getgenv().bypassing = true
+    local bypassac
+
+    bypassac = hookmetamethod(game, '__namecall', function(self, ...)
+        local args = {...}
+        if not checkcaller() and self == RemoteEvents['Sonar'] then
+            return nil
+        end
+        return bypassac(self, ...)
+    end) 
+end 
+MainSection:NewButton("Bypass AC", "Anticheat", function()
+Callback = function()
         if not IsPlayerAlive(LocalPlayer) then
             MakeAtlasNotification('Not alive', 'Maybe click the play button?', 5)
             return
@@ -163,15 +105,35 @@ Tab:AddButton({
             message.New('Positive', 'Bypassed AntiCheat')
         end
     end
-})
+end)
 
-DupeTab:AddButton({
-    Name = 'Stop data(dupe)',
-    Callback = function(Value)
-        RemoteEvents['SetSettings']:FireServer(Workspace)
+MainSection:NewButton("soul duping need wood chest", "dup soul", function()
+    local chest = game:GetService("Workspace").Replicators.NonPassive["Wood Storage Chest"]
+    local putIn = true
+    local itemIDs = {204, 202, 201, 203, 218, 216} -- IDs for Max Soul
+    local Event = game:GetService("ReplicatedStorage").References.Comm.Events.UpdateStorageChest
+
+    for _, itemID in ipairs(itemIDs) do
+        Event:FireServer(chest, putIn, itemID)
     end
-})
+end)
 
-
-
-
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Highlight = Instance.new("Highlight")
+Highlight.Name = "Highlight"
+function ApplyToCurrentPlayers()
+   for i,player in pairs(Players:GetChildren()) do
+      repeat wait() until player.Character
+      if not player.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
+         local HighlightClone = Highlight:Clone()
+         HighlightClone.Adornee = player.Character
+         HighlightClone.Parent = player.Character:FindFirstChild("HumanoidRootPart")
+         HighlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+         HighlightClone.Name = "Highlight"
+      end
+   end
+end
+RunService.Heartbeat:Connect(function()
+   ApplyToCurrentPlayers()
+end)
